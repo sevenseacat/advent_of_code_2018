@@ -1,21 +1,15 @@
-# Advent
+# Advent of Code 2018
 
-**TODO: Add description**
+[![Build Status](https://travis-ci.org/sevenseacat/advent_of_code_2018.svg?branch=master)](https://travis-ci.org/sevenseacat/advent_of_code_2018)
 
-## Installation
+My Elixir solutions for the [Advent of Code 2018](http://adventofcode.com/2018).
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `advent` to your list of dependencies in `mix.exs`:
+## Runtimes
 
-```elixir
-def deps do
-  [
-    {:advent, "~> 0.1.0"}
-  ]
-end
+If you're curious how long each of the solutions roughly takes to run.
+
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/advent](https://hexdocs.pm/advent).
-
+iex(11)> Advent.run_all
+day 1, part 1: 3.7e-4sec
+day 1, part 2: 20.186174sec
+```
