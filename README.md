@@ -12,4 +12,5 @@ If you're curious how long each of the solutions roughly takes to run.
 iex(17)> Advent.run_all
 day 1, part 1: 5.24e-4sec
 day 1, part 2: 0.181216sec
+day 2, part 1: 0.080725sec
 ```
