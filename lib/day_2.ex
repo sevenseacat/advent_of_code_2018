@@ -114,7 +114,6 @@ defmodule Day2 do
 
   def parse_input(input) do
     input
-    |> String.split("\n")
-    |> Enum.reject(&(&1 == ""))
+    |> String.split("\n", trim: true)
   end
 end

@@ -55,8 +55,7 @@ defmodule Day3 do
 
   def parse_input(input) do
     input
-    |> String.split("\n")
-    |> Enum.reject(&(&1 == ""))
+    |> String.split("\n", trim: true)
     |> Enum.map(&parse_row/1)
   end
 
