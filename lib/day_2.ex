@@ -111,4 +111,10 @@ defmodule Day2 do
   defp frequencies(string) do
     Enum.reduce(string, Map.new(), fn c, acc -> Map.update(acc, c, 1, &(&1 + 1)) end)
   end
+
+  def parse_input(input) do
+    input
+    |> String.split("\n")
+    |> Enum.reject(&(&1 == ""))
+  end
 end
