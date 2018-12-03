@@ -8,16 +8,35 @@ defmodule Advent do
   end
 
   def run_all do
-    [
-      {1, 1, fn -> data(1) |> Day1.part1() end},
-      {1, 2, fn -> data(1) |> Day1.part2() end},
-      {2, 1, fn -> data(2, parse: true) |> Day2.part1() end},
-      {2, 2, fn -> data(2, parse: true) |> Day2.part2() end},
-      {3, 1, fn -> data(3) |> Day3.part1() end},
-      {3, 2, fn -> data(3) |> Day3.part2() end}
+    benchee_opts = [
+      print: [benchmarking: false, configuration: false],
+      console: [comparison: false]
     ]
-    |> Enum.each(fn {day, part_no, fun} ->
-      IO.puts("day #{day}, part #{part_no}: #{Benchmark.measure(fun) |> elem(0)}")
-    end)
+
+    Benchee.run(
+      %{
+        "day 1, part 1" => fn -> data(1) |> Day1.part1() end,
+        "day 1, part 2" => fn -> data(1) |> Day1.part2() end
+      },
+      benchee_opts
+    )
+
+    Benchee.run(
+      %{
+        "day 2, part 1" => fn -> data(2, parse: true) |> Day2.part1() end,
+        "day 2, part 2" => fn -> data(2, parse: true) |> Day2.part2() end
+      },
+      benchee_opts
+    )
+
+    Benchee.run(
+      %{
+        "day 3, part 1" => fn -> data(3) |> Day3.part1() end,
+        "day 3, part 2" => fn -> data(3) |> Day3.part2() end
+      },
+      benchee_opts
+    )
+
+    IO.puts("Done")
   end
 end
