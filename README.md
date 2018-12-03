@@ -9,11 +9,11 @@ My Elixir solutions for the [Advent of Code 2018](http://adventofcode.com/2018).
 If you're curious how long each of the solutions roughly takes to run.
 
 ```
-iex(17)> Advent.run_all
-day 1, part 1: 5.24e-4sec
-day 1, part 2: 0.181216sec
-day 2, part 1: 0.080725sec
-day 2, part 2: 0.0542sec
-day 3, part 1: 0.912284sec
-day 3, part 2: 0.964664sec
+iex(2)> Advent.run_all
+day 1, part 1: 3.78e-4sec
+day 1, part 2: 0.148975sec
+day 2, part 1: 0.009684sec
+day 2, part 2: 0.057352sec
+day 3, part 1: 0.924302sec
+day 3, part 2: 0.951276sec
 ```
