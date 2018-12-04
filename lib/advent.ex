@@ -37,6 +37,13 @@ defmodule Advent do
       benchee_opts
     )
 
+    Benchee.run(
+      %{
+        "day 4, part 1" => fn -> data(4, parse: true) |> Day4.part1() end
+      },
+      benchee_opts
+    )
+
     IO.puts("Done")
   end
 end
