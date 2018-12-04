@@ -10,18 +10,18 @@ If you're curious how long each of my solutions roughly takes to run.
 
 ```
 Name                    ips        average  deviation         median         99th %
-day 1, part 1        7.87 K       0.127 ms    ±16.10%       0.129 ms        0.21 ms
-day 1, part 2     0.00872 K      114.62 ms     ±3.69%      114.24 ms      126.47 ms
+day 1, part 1        7.11 K       0.141 ms    ±32.97%       0.131 ms        0.27 ms
+day 1, part 2     0.00703 K      142.28 ms    ±23.03%      126.11 ms      218.78 ms
 
 Name                    ips        average  deviation         median         99th %
-day 2, part 1        115.34        8.67 ms     ±8.99%        8.61 ms       13.76 ms
-day 2, part 2         20.04       49.90 ms     ±3.36%       49.25 ms       59.50 ms
+day 2, part 1        430.85        2.32 ms    ±10.97%        2.28 ms        3.30 ms
+day 2, part 2        222.68        4.49 ms     ±8.41%        4.42 ms        6.82 ms
 
 Name                    ips        average  deviation         median         99th %
-day 3, part 1          1.52      659.83 ms     ±9.71%      644.82 ms      799.19 ms
-day 3, part 2          1.31      763.50 ms     ±8.08%      759.23 ms      875.95 ms
+day 3, part 2          1.32      755.09 ms     ±9.69%      754.45 ms      891.66 ms
+day 3, part 1          1.27      789.14 ms    ±15.87%      793.00 ms     1025.02 ms
 
 Name                    ips        average  deviation         median         99th %
-day 4, part 1         80.01       12.50 ms    ±31.05%       11.06 ms       31.96 ms
-day 4, part 2         77.79       12.85 ms    ±23.37%       11.70 ms       24.50 ms
+day 4, part 1         94.95       10.53 ms     ±7.73%       10.34 ms       14.54 ms
+day 4, part 2         62.12       16.10 ms    ±50.51%       12.39 ms       53.79 ms
 ```
