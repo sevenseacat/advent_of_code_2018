@@ -39,7 +39,8 @@ defmodule Advent do
 
     Benchee.run(
       %{
-        "day 4, part 1" => fn -> data(4, parse: true) |> Day4.part1() end
+        "day 4, part 1" => fn -> data(4, parse: true) |> Day4.part1() end,
+        "day 4, part 2" => fn -> data(4, parse: true) |> Day4.part2() end
       },
       benchee_opts
     )
