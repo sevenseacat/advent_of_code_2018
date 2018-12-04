@@ -47,4 +47,17 @@ defmodule Advent do
 
     IO.puts("Done")
   end
+
+  # Extra big data inputs for day 2, to see how our algorithms perform.
+  # Spoilers - Poorly.
+  def day_2_extra(file) do
+    IO.puts(
+      "#{file}: #{
+        Benchmark.measure(fn ->
+          File.read!("lib/data/day_2_extra/#{file}.txt") |> Day2.parse_input() |> Day2.part2()
+        end)
+        |> elem(0)
+      }"
+    )
+  end
 end
