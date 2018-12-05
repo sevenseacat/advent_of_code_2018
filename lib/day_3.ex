@@ -63,4 +63,16 @@ defmodule Day3 do
     string_row = Regex.named_captures(@row_regex, row)
     for {key, val} <- string_row, into: %{}, do: {String.to_atom(key), String.to_integer(val)}
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 3, part 1" => fn -> Advent.data(3) |> part1() end,
+        "day 3, part 2" => fn -> Advent.data(3) |> part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end

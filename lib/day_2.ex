@@ -109,4 +109,16 @@ defmodule Day2 do
     input
     |> String.split("\n", trim: true)
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 2, part 1" => fn -> Advent.data(2) |> parse_input |> part1() end,
+        "day 2, part 2" => fn -> Advent.data(2) |> parse_input |> part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end

@@ -44,4 +44,16 @@ defmodule Day1 do
       do_part2(rest, new, original, MapSet.put(seen, current))
     end
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 1, part 1" => fn -> Advent.data(1) |> part1() end,
+        "day 1, part 2" => fn -> Advent.data(1) |> part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end

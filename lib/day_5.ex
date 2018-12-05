@@ -81,4 +81,16 @@ defmodule Day5 do
       dedup([b | rest], [a | seen])
     end
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 5, part 1" => fn -> Advent.data(5) |> part1() |> String.length() end,
+        "day 5, part 2" => fn -> Advent.data(5) |> part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end

@@ -135,4 +135,16 @@ defmodule Day4 do
   defp frequencies(list) do
     Enum.reduce(list, Map.new(), fn c, acc -> Map.update(acc, c, 1, &(&1 + 1)) end)
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 4, part 1" => fn -> Advent.data(4) |> parse_input |> part1() end,
+        "day 4, part 2" => fn -> Advent.data(4) |> parse_input |> part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end
