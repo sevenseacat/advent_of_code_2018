@@ -45,10 +45,19 @@ defmodule Advent do
       benchee_opts
     )
 
+    Benchee.run(
+      %{
+        "day 5, part 1" => fn -> data(5) |> Day5.part1() |> String.length() end,
+        "day 5, part 2" => fn -> data(5) |> Day5.part2() end
+      },
+      benchee_opts
+    )
+
     IO.puts("Done")
   end
 
   # Extra big data inputs for day 2, to see how our algorithms perform.
+  # https://www.reddit.com/r/adventofcode/comments/a2rt9s/2018_day_2_part_2_here_are_some_big_inputs_to/
   # Spoilers - Poorly.
   def day_2_extra(file) do
     IO.puts(
