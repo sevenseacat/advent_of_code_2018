@@ -4,13 +4,56 @@ defmodule Day7 do
   "CABDFE"
   """
   def part1(input) do
+    input = to_dependency_list(input)
+
+    start = find_next(input) |> hd
+
+    do_part1(input, start, [])
+    |> Enum.reverse()
+    |> List.to_string()
+  end
+
+  defp do_part1(input, letter, seen) do
+    # This letter is seen - mark it as so and remove it from all of the dependency lists.
+    seen = [letter | seen]
+    input = clear_dependencies(input, letter)
+    next = find_next(input)
+
+    case next do
+      [] -> seen
+      x -> do_part1(input, hd(x), seen)
+    end
+  end
+
+  defp clear_dependencies(input, letter) do
+    input
+    |> Enum.map(fn {x, list} -> {x, Enum.reject(list, &(&1 == letter))} end)
+    |> Enum.reject(fn {x, _} -> x == letter end)
+    |> Enum.into(%{})
+  end
+
+  @doc """
+  iex> Day7.to_dependency_list([{"A", "C"}, {"F", "C"}, {"B", "A"}, {"D", "A"}, {"E", "B"}, {"E", "D"}, {"E", "F"}])
+  %{"A" => ["C"], "B" => ["A"], "C" => [], "D" => ["A"], "E" => ["F", "D", "B"], "F" => ["C"]}
+  """
+  def to_dependency_list(input) do
+    map = letters(input) |> Enum.reduce(%{}, fn x, acc -> Map.put(acc, x, []) end)
+
+    input
+    |> Enum.reduce(map, fn {x, y}, acc -> Map.update(acc, x, [y], &[y | &1]) end)
+  end
+
+  defp find_next(input) do
+    input
+    |> Stream.filter(fn {_, list} -> list == [] end)
+    |> Stream.map(&elem(&1, 0))
+    |> Enum.sort()
   end
 
   def letters(input) do
     input
     |> Enum.reduce([], fn {x, y}, list -> [x, y | list] end)
     |> Enum.uniq()
-    |> Enum.sort()
   end
 
   @doc """
@@ -28,5 +71,16 @@ defmodule Day7 do
          <<"Step ", x::binary-1, " must be finished before step ", y::binary-1, " can begin.">>
        ) do
     {y, x}
+  end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 7, part 1" => fn -> Advent.data(7) |> parse_input |> part1() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
   end
 end
