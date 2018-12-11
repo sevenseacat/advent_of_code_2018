@@ -14,9 +14,7 @@ defmodule Day11 do
   {{21, 61, 3}, 30}
   """
   def part1(serial \\ @serial) do
-    serial
-    |> build_grid
-    |> max_by_summed_area_table(3, 3)
+    max_by_summed_area_table(serial, 3, 3)
   end
 
   @doc """
@@ -27,9 +25,7 @@ defmodule Day11 do
   {{232,251,12}, 119}
   """
   def part2(serial \\ @serial) do
-    serial
-    |> build_grid
-    |> max_by_summed_area_table(1, @max_size)
+    max_by_summed_area_table(serial, 1, @max_size)
   end
 
   @doc """
@@ -55,48 +51,45 @@ defmodule Day11 do
     |> Kernel.-(5)
   end
 
-  @doc """
-  iex> Day11.build_grid({32, 44}, {33, 45}, 18)
-  %{{32, 44} => -2, {33, 44} => -4, {32, 45} => -4, {33, 45} => 4}
-  """
-  def build_grid(serial) do
-    for x <- 1..@max_size, y <- 1..@max_size do
-      {{x, y}, cell_power({x, y}, serial)}
-    end
-    |> Enum.into(%{})
-  end
-
-  defp max_by_summed_area_table(grid, min_size, max_size) do
-    sat = summed_area_table(grid)
+  defp max_by_summed_area_table(serial, min_size, max_size) do
+    table = generate_summed_area_table(serial)
 
     min_size..max_size
-    |> Enum.map(fn size -> max_grid_by_size(sat, size) end)
+    |> Enum.map(fn size -> max_grid_by_size(table, size) end)
     |> Enum.max_by(fn {_, power} -> power end)
   end
 
-  defp summed_area_table(grid) do
-    Enum.reduce(@max_size..1, %{}, fn x, x_acc ->
-      Enum.reduce(@max_size..1, x_acc, fn y, sat ->
-        Map.put(
-          sat,
-          {x, y},
-          Map.get(grid, {x, y}, 0) + Map.get(sat, {x + 1, y}, 0) + Map.get(sat, {x, y + 1}, 0) -
-            Map.get(sat, {x + 1, y + 1}, 0)
+  defp generate_summed_area_table(serial) do
+    table = :ets.new(:day11, [:set])
+
+    Enum.each(@max_size..1, fn x ->
+      Enum.each(@max_size..1, fn y ->
+        :ets.insert(
+          table,
+          {{x, y},
+           cell_power({x, y}, serial) + ets_lookup(table, {x + 1, y}) +
+             ets_lookup(table, {x, y + 1}) - ets_lookup(table, {x + 1, y + 1})}
         )
       end)
     end)
+
+    table
   end
 
-  defp max_grid_by_size(sat, size) do
-    sat
-    # Only want full subgrids inside the 300x300 grid
-    |> Stream.filter(fn {{x, y}, _} -> x + size - 1 <= @max_size && y + size - 1 <= @max_size end)
-    |> Enum.map(fn {{x, y}, power} ->
+  defp ets_lookup(table, {x, y}) do
+    case :ets.lookup(table, {x, y}) do
+      [{_coord, val}] -> val
+      _ -> 0
+    end
+  end
+
+  defp max_grid_by_size(table, size) do
+    for x <- 1..(@max_size - size + 1), y <- 1..(@max_size - size + 1) do
       # The magic of the summed-area table at work. A + D - B - C.
       {{x, y, size},
-       power + Map.get(sat, {x + size, y + size}, 0) - Map.get(sat, {x, y + size}, 0) -
-         Map.get(sat, {x + size, y}, 0)}
-    end)
+       ets_lookup(table, {x, y}) + ets_lookup(table, {x + size, y + size}) -
+         ets_lookup(table, {x, y + size}) - ets_lookup(table, {x + size, y})}
+    end
     |> Enum.max_by(fn {_, power} -> power end)
   end
 
