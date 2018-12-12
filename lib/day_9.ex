@@ -1,87 +1,123 @@
 defmodule Day9 do
   @doc """
-  iex> Day9.part1("9 players; last marble is worth 25 points")
+  iex> Day9.digraph("9 players; last marble is worth 25 points")
   32
 
-  iex> Day9.part1("10 players; last marble is worth 1618 points")
+  iex> Day9.digraph("10 players; last marble is worth 1618 points")
   8317
 
-  iex> Day9.part1("13 players; last marble is worth 7999 points")
+  iex> Day9.digraph("13 players; last marble is worth 7999 points")
   146373
 
-  iex> Day9.part1("17 players; last marble is worth 1104 points")
+  iex> Day9.digraph("17 players; last marble is worth 1104 points")
   2764
 
-  iex> Day9.part1("21 players; last marble is worth 6111 points")
+  iex> Day9.digraph("21 players; last marble is worth 6111 points")
   54718
 
-  iex> Day9.part1("30 players; last marble is worth 5807 points")
+  iex> Day9.digraph("30 players; last marble is worth 5807 points")
   37305
   """
-  def part1(input) do
-    {players, points} = parse_input(input)
-
+  def digraph(input) do
     field = :digraph.new()
     :digraph.add_vertex(field, 0)
-    :digraph.add_vertex(field, 1)
-    :digraph.add_vertex(field, 2)
-    :digraph.add_vertex(field, 3)
-    :digraph.add_vertex(field, 4)
-    :digraph.add_vertex(field, 5)
-    :digraph.add_vertex(field, 6)
-    :digraph.add_vertex(field, 7)
+    :digraph.add_edge(field, 0, 0)
 
-    :digraph.add_edge(field, 0, 4)
-    :digraph.add_edge(field, 4, 2)
-    :digraph.add_edge(field, 2, 5)
-    :digraph.add_edge(field, 5, 1)
-    :digraph.add_edge(field, 1, 6)
-    :digraph.add_edge(field, 6, 3)
-    :digraph.add_edge(field, 3, 7)
-    :digraph.add_edge(field, 7, 0)
+    do_part1(input, &place_marble/3, field)
+  end
 
-    run_game(%{
-      scores: %{},
-      players: players,
-      turn: 7,
-      current: 8,
-      last: 7,
-      max: points,
-      field: field
-    })
+  @doc """
+  iex> Day9.ziplist("9 players; last marble is worth 25 points")
+  32
+
+  iex> Day9.ziplist("10 players; last marble is worth 1618 points")
+  8317
+
+  iex> Day9.ziplist("13 players; last marble is worth 7999 points")
+  146373
+
+  iex> Day9.ziplist("17 players; last marble is worth 1104 points")
+  2764
+
+  iex> Day9.ziplist("21 players; last marble is worth 6111 points")
+  54718
+
+  iex> Day9.ziplist("30 players; last marble is worth 5807 points")
+  37305
+  """
+  def ziplist(input) do
+    do_part1(input, &place_marble_zip/3, {[0], []})
+  end
+
+  defp do_part1(input, fun, field) do
+    {players, points} = parse_input(input)
+
+    run_game(
+      %{
+        scores: %{},
+        players: players,
+        turn: 1,
+        current: 1,
+        last: 0,
+        max: points,
+        field: field
+      },
+      fun
+    )
     |> Map.get(:scores)
     |> Enum.max_by(fn {_player, score} -> score end)
     |> elem(1)
   end
 
-  defp run_game(%{current: marble, max: max} = game) when marble > max, do: game
+  defp run_game(%{current: marble, max: max} = game, _) when marble > max, do: game
 
-  defp run_game(%{
-         players: players,
-         turn: turn,
-         current: curr,
-         last: last,
-         field: field,
-         scores: scores,
-         max: max
-       }) do
-    {score, new_pos, field} = place_marble(field, curr, last)
+  defp run_game(
+         %{
+           players: players,
+           turn: turn,
+           current: curr,
+           last: last,
+           field: field,
+           scores: scores,
+           max: max
+         },
+         fun
+       ) do
+    {score, new_pos, field} = fun.(field, curr, last)
 
-    # Progress meter...
-    # if rem(curr, div(max, 100)) == 0 do
-    #  IO.inspect(curr, label: "#{div(curr, div(max, 100))}%")
-    # end
-
-    run_game(%{
-      players: players,
-      turn: rem(turn + 1, players),
-      current: curr + 1,
-      last: new_pos,
-      field: field,
-      scores: Map.update(scores, turn, score, &(&1 + score)),
-      max: max
-    })
+    run_game(
+      %{
+        players: players,
+        turn: rem(turn + 1, players),
+        current: curr + 1,
+        last: new_pos,
+        field: field,
+        scores: Map.update(scores, turn, score, &(&1 + score)),
+        max: max
+      },
+      fun
+    )
   end
+
+  defp place_marble_zip(state, new, _) do
+    if rem(new, 23) == 0 do
+      {fwd, bwd} =
+        Enum.reduce(1..7, state, fn _, state ->
+          move_marble_back(state)
+        end)
+
+      {new + hd(bwd), nil, {tl(fwd), [hd(fwd) | tl(bwd)]}}
+    else
+      {fwd, bwd} = move_marble_forward(state)
+      {0, new, {fwd, [new | bwd]}}
+    end
+  end
+
+  defp move_marble_back({fwd, []}), do: move_marble_back({[], Enum.reverse(fwd)})
+  defp move_marble_back({fwd, [hd | bwd]}), do: {[hd | fwd], bwd}
+
+  defp move_marble_forward({[], bwd}), do: move_marble_forward({Enum.reverse(bwd), []})
+  defp move_marble_forward({[hd | fwd], bwd}), do: {fwd, [hd | bwd]}
 
   defp place_marble(graph, new, last) do
     if rem(new, 23) == 0 do
@@ -111,10 +147,6 @@ defmodule Day9 do
     end
   end
 
-  def new_special_position(size, pos) do
-    if pos - 7 >= 0, do: pos - 7, else: pos - 7 + size
-  end
-
   defp parse_input(input) do
     ~r/(\d+) players; last marble is worth (\d+) points/
     |> Regex.run(input, capture: :all_but_first)
@@ -125,8 +157,18 @@ defmodule Day9 do
   def bench do
     Benchee.run(
       %{
-        "day 9, part 1" => fn -> part1("429 players; last marble is worth 70901 points") end,
-        "day 9, part 2" => fn -> part1("429 players; last marble is worth 7090100 points") end
+        "day 9, part 1 (digraph)" => fn ->
+          digraph("429 players; last marble is worth 70901 points")
+        end,
+        "day 9, part 1 (ziplist)" => fn ->
+          ziplist("429 players; last marble is worth 70901 points")
+        end,
+        "day 9, part 2 (digraph)" => fn ->
+          digraph("429 players; last marble is worth 7090100 points")
+        end,
+        "day 9, part 2 (ziplist)" => fn ->
+          ziplist("429 players; last marble is worth 7090100 points")
+        end
       },
       Application.get_env(:advent, :benchee)
     )
