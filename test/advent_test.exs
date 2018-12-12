@@ -12,6 +12,7 @@ defmodule AdventTest do
   doctest Day9
   doctest Day10
   doctest Day11
+  doctest Day12
 
   describe "day 7, #tick" do
     test "it performs the first tick with sample input" do
@@ -163,6 +164,45 @@ defmodule AdventTest do
                done: ["A", "C"],
                delay: 0
              }
+    end
+  end
+
+  describe "day 12" do
+    test "part 1 works for sample input" do
+      initial = "#..#.#..##......###...###"
+
+      rules =
+        "...## => #\n..#.. => #\n.#... => #\n.#.#. => #\n.#.## => #\n.##.. => #\n.#### => #\n#.#.# => #\n#.### => #\n##.#. => #\n##.## => #\n###.. => #\n###.# => #\n####. => #"
+
+      assert Day12.part1(initial, rules, 0) == 145
+
+      assert Day12.part1(initial, rules, 1) == 91
+
+      assert Day12.part1(initial, rules, 20) == 325
+    end
+
+    test "parsing input" do
+      input =
+        "...## => #\n..#.. => #\n.#... => #\n.#.#. => #\n.#.## => #\n.##.. => #\n.#### => #\n#.#.# => #\n#.### => #\n##.#. => #\n##.## => #\n###.. => #\n###.# => #\n####. => #"
+
+      output = [
+        {[?., ?., ?., ?#, ?#], ?#},
+        {[?., ?., ?#, ?., ?.], ?#},
+        {[?., ?#, ?., ?., ?.], ?#},
+        {[?., ?#, ?., ?#, ?.], ?#},
+        {[?., ?#, ?., ?#, ?#], ?#},
+        {[?., ?#, ?#, ?., ?.], ?#},
+        {[?., ?#, ?#, ?#, ?#], ?#},
+        {[?#, ?., ?#, ?., ?#], ?#},
+        {[?#, ?., ?#, ?#, ?#], ?#},
+        {[?#, ?#, ?., ?#, ?.], ?#},
+        {[?#, ?#, ?., ?#, ?#], ?#},
+        {[?#, ?#, ?#, ?., ?.], ?#},
+        {[?#, ?#, ?#, ?., ?#], ?#},
+        {[?#, ?#, ?#, ?#, ?.], ?#}
+      ]
+
+      assert Day12.parse_input(input) == output
     end
   end
 end
