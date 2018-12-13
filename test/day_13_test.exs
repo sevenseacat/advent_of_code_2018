@@ -1,0 +1,115 @@
+defmodule Day13Test do
+  use ExUnit.Case
+  doctest Day13
+
+  describe "parse_input" do
+    test "it parses simple loops" do
+      {:ok, input} = File.read("test/data/day_13_simple_loop")
+
+      expected_output = %{
+        {0, 0} => {"/", nil},
+        {1, 0} => {"-", nil},
+        {2, 0} => {"-", nil},
+        {3, 0} => {"-", nil},
+        {4, 0} => {"\\", nil},
+        {0, 1} => {"|", nil},
+        {4, 1} => {"|", nil},
+        {0, 2} => {"\\", nil},
+        {1, 2} => {"-", nil},
+        {2, 2} => {"-", nil},
+        {3, 2} => {"-", nil},
+        {4, 2} => {"/", nil}
+      }
+
+      assert Day13.parse_input(input) == expected_output
+    end
+
+    test "it can parse intersections and carts" do
+      {:ok, input} = File.read("test/data/day_13_intersections_carts")
+
+      expected_output = %{
+        {0, 0} => {"/", nil},
+        {1, 0} => {"-", nil},
+        {2, 0} => {"-", nil},
+        {3, 0} => {"-", {:right, :left}},
+        {4, 0} => {"-", nil},
+        {5, 0} => {"-", nil},
+        {6, 0} => {"\\", nil},
+        {0, 1} => {"|", nil},
+        {6, 1} => {"|", nil},
+        {0, 2} => {"|", nil},
+        {3, 2} => {"/", nil},
+        {4, 2} => {"-", nil},
+        {5, 2} => {"-", nil},
+        {6, 2} => {"+", nil},
+        {7, 2} => {"-", nil},
+        {8, 2} => {"-", nil},
+        {9, 2} => {"\\", nil},
+        {0, 3} => {"|", nil},
+        {3, 3} => {"|", {:up, :left}},
+        {6, 3} => {"|", nil},
+        {9, 3} => {"|", nil},
+        {0, 4} => {"\\", nil},
+        {1, 4} => {"-", nil},
+        {2, 4} => {"-", nil},
+        {3, 4} => {"+", nil},
+        {4, 4} => {"-", nil},
+        {5, 4} => {"-", nil},
+        {6, 4} => {"/", nil},
+        {9, 4} => {"|", nil},
+        {3, 5} => {"|", nil},
+        {9, 5} => {"|", nil},
+        {3, 6} => {"\\", nil},
+        {4, 6} => {"-", nil},
+        {5, 6} => {"-", nil},
+        {6, 6} => {"-", nil},
+        {7, 6} => {"-", nil},
+        {8, 6} => {"-", nil},
+        {9, 6} => {"/", nil}
+      }
+
+      assert Day13.parse_input(input) == expected_output
+    end
+  end
+
+  describe "tick" do
+    test "can moves carts once" do
+      input = File.read!("test/data/day_13_crash") |> Day13.parse_input()
+      output = Day13.tick(input)
+
+      # Cart 1 has moved right
+      assert Map.get(output, {2, 0}) == {"-", nil}
+      assert Map.get(output, {3, 0}) == {"-", {:right, :left}}
+
+      # Cart 2 has moved down, turned left, and faces right (next turn straight)
+      assert Map.get(output, {9, 3}) == {"|", nil}
+      assert Map.get(output, {9, 4}) == {"+", {:right, :straight}}
+    end
+
+    test "can moves carts twice" do
+      input = File.read!("test/data/day_13_crash") |> Day13.parse_input()
+      output = input |> Day13.tick() |> Day13.tick()
+
+      # Cart 1 has moved right, followed the corner, faces down
+      assert Map.get(output, {2, 0}) == {"-", nil}
+      assert Map.get(output, {3, 0}) == {"-", nil}
+      assert Map.get(output, {4, 0}) == {"\\", {:down, :left}}
+
+      # Cart 2 has moved right
+      assert Map.get(output, {9, 3}) == {"|", nil}
+      assert Map.get(output, {9, 4}) == {"+", nil}
+      assert Map.get(output, {10, 4}) == {"-", {:right, :straight}}
+    end
+
+    test "goes all the way to a crash" do
+      input = File.read!("test/data/day_13_crash") |> Day13.parse_input()
+
+      # The sample input crashes after 14 ticks.
+      output = Enum.reduce(1..14, input, fn _, input -> Day13.tick(input) end)
+
+      # One spot has two carts - the crash site.
+      occupied = Enum.filter(output, fn {_coord, {_track, carts}} -> carts != nil end)
+      assert occupied == {{7, 3}, [{:up, :left}, {:down, :right}]}
+    end
+  end
+end

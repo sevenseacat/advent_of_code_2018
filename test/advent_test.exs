@@ -13,7 +13,6 @@ defmodule AdventTest do
   doctest Day10
   doctest Day11
   doctest Day12
-  doctest Day13
 
   describe "day 7, #tick" do
     test "it performs the first tick with sample input" do
@@ -204,76 +203,6 @@ defmodule AdventTest do
       ]
 
       assert Day12.parse_input(input) == output
-    end
-  end
-
-  describe "day 13, parse input" do
-    test "it parses simple loops" do
-      {:ok, input} = File.read("test/data/day_13_simple_loop")
-
-      expected_output = %{
-        {0, 0} => {"/", nil},
-        {1, 0} => {"-", nil},
-        {2, 0} => {"-", nil},
-        {3, 0} => {"-", nil},
-        {4, 0} => {"\\", nil},
-        {0, 1} => {"|", nil},
-        {4, 1} => {"|", nil},
-        {0, 2} => {"\\", nil},
-        {1, 2} => {"-", nil},
-        {2, 2} => {"-", nil},
-        {3, 2} => {"-", nil},
-        {4, 2} => {"/", nil}
-      }
-
-      assert Day13.parse_input(input) == expected_output
-    end
-
-    test "it can parse intersections and carts" do
-      {:ok, input} = File.read("test/data/day_13_intersections_carts")
-
-      expected_output = %{
-        {0, 0} => {"/", nil},
-        {1, 0} => {"-", nil},
-        {2, 0} => {"-", nil},
-        {3, 0} => {"-", :right},
-        {4, 0} => {"-", nil},
-        {5, 0} => {"-", nil},
-        {6, 0} => {"\\", nil},
-        {0, 1} => {"|", nil},
-        {6, 1} => {"|", nil},
-        {0, 2} => {"|", nil},
-        {3, 2} => {"/", nil},
-        {4, 2} => {"-", nil},
-        {5, 2} => {"-", nil},
-        {6, 2} => {"+", nil},
-        {7, 2} => {"-", nil},
-        {8, 2} => {"-", nil},
-        {9, 2} => {"\\", nil},
-        {0, 3} => {"|", nil},
-        {3, 3} => {"|", :up},
-        {6, 3} => {"|", nil},
-        {9, 3} => {"|", nil},
-        {0, 4} => {"\\", nil},
-        {1, 4} => {"-", nil},
-        {2, 4} => {"-", nil},
-        {3, 4} => {"+", nil},
-        {4, 4} => {"-", nil},
-        {5, 4} => {"-", nil},
-        {6, 4} => {"/", nil},
-        {9, 4} => {"|", nil},
-        {3, 5} => {"|", nil},
-        {9, 5} => {"|", nil},
-        {3, 6} => {"\\", nil},
-        {4, 6} => {"-", nil},
-        {5, 6} => {"-", nil},
-        {6, 6} => {"-", nil},
-        {7, 6} => {"-", nil},
-        {8, 6} => {"-", nil},
-        {9, 6} => {"/", nil}
-      }
-
-      assert Day13.parse_input(input) == expected_output
     end
   end
 end
