@@ -5,6 +5,12 @@ defmodule Day13 do
     |> run_until_crash(0)
   end
 
+  def part2(input) do
+    input
+    |> parse_input
+    |> run_removing_crashes(0)
+  end
+
   def run_until_crash(input, tick) do
     output = tick(input)
 
@@ -14,8 +20,19 @@ defmodule Day13 do
     end
   end
 
+  def run_removing_crashes(input, tick) do
+    output = tick(input) |> remove_crashes
+
+    case find_carts(output) do
+      [cart] -> cart
+      _ -> run_removing_crashes(output, tick + 1)
+    end
+  end
+
   def tick(grid) do
-    find_carts(grid)
+    grid
+    |> find_carts
+    |> Enum.sort_by(fn {coord, _} -> coord end)
     |> Enum.reduce(grid, fn cart, grid -> move(grid, cart) end)
   end
 
@@ -24,22 +41,30 @@ defmodule Day13 do
   end
 
   defp move(grid, {coord, {_, {facing, next_turn}}}) do
-    new_coord = move_coord(coord, facing)
-    track_at_new_coord = Map.get(grid, new_coord) |> elem(0)
-    new_facing = turn(facing, track_at_new_coord, next_turn)
-    new_turn = if track_at_new_coord == "+", do: next_turn(next_turn), else: next_turn
+    # This cart may have been crashed since the start of the tick.
+    {_, carts} = Map.get(grid, coord)
 
-    new_cart = {new_facing, new_turn}
+    if is_list(carts) do
+      # If so, it cannot move.
+      grid
+    else
+      # It can move. I like to move it move it
+      new_coord = move_coord(coord, facing)
+      track_at_new_coord = Map.get(grid, new_coord) |> elem(0)
+      new_facing = turn(facing, track_at_new_coord, next_turn)
+      new_turn = if track_at_new_coord == "+", do: next_turn(next_turn), else: next_turn
+      new_cart = {new_facing, new_turn}
 
-    grid
-    |> Map.update!(coord, fn {track, _cart} -> {track, nil} end)
-    |> Map.update!(new_coord, fn {track, cart} ->
-      if cart == nil do
-        {track, new_cart}
-      else
-        {track, [new_cart | cart]}
-      end
-    end)
+      grid
+      |> Map.update!(coord, fn {track, _} -> {track, nil} end)
+      |> Map.update!(new_coord, fn {track, cart} ->
+        if cart == nil do
+          {track, new_cart}
+        else
+          {track, [new_cart, cart | []]}
+        end
+      end)
+    end
   end
 
   defp move_coord({x, y}, :left), do: {x - 1, y}
@@ -75,6 +100,15 @@ defmodule Day13 do
 
   def crashed?(input) do
     Enum.find(input, fn {_, {_, carts}} -> is_list(carts) end)
+  end
+
+  def remove_crashes(input) do
+    input
+    |> Enum.map(fn {coord, {track, carts}} ->
+      carts = if is_list(carts), do: nil, else: carts
+      {coord, {track, carts}}
+    end)
+    |> Enum.into(%{})
   end
 
   def parse_input(input) do
@@ -114,7 +148,8 @@ defmodule Day13 do
   def bench do
     Benchee.run(
       %{
-        "day 13, part 1" => fn -> Advent.data(13) |> Day13.part1() end
+        "day 13, part 1" => fn -> Advent.data(13) |> Day13.part1() end,
+        "day 13, part 2" => fn -> Advent.data(13) |> Day13.part2() end
       },
       Application.get_env(:advent, :benchee)
     )

@@ -109,15 +109,35 @@ defmodule Day13Test do
 
       # One spot has two carts - the crash site.
       occupied = Enum.filter(output, fn {_coord, {_track, carts}} -> carts != nil end)
-      assert occupied == [{{7, 3}, {"|", [{:up, :left} | {:down, :right}]}}]
+      assert occupied == [{{7, 3}, {"|", [{:up, :left}, {:down, :right}]}}]
     end
   end
 
   describe "run_until_crash" do
-    input = File.read!("test/data/day_13_crash") |> Day13.parse_input()
-    {coord, {_track, carts}} = Day13.run_until_crash(input, 0)
+    test "works with sample data" do
+      input = File.read!("test/data/day_13_crash") |> Day13.parse_input()
+      {coord, {_track, carts}} = Day13.run_until_crash(input, 0)
 
-    assert coord == {7, 3}
-    assert carts == [{:up, :left} | {:down, :right}]
+      assert coord == {7, 3}
+      assert carts == [{:up, :left}, {:down, :right}]
+    end
+  end
+
+  describe "run_removing_crashes" do
+    test "works with sample data" do
+      input = File.read!("test/data/day_13_removing_crashes") |> Day13.parse_input()
+      {coord, {_track, carts}} = Day13.run_removing_crashes(input, 0)
+
+      assert coord == {6, 4}
+      assert carts == {:up, :left}
+    end
+
+    test "works when carts cross during a tick but do not end up on the same point" do
+      input = File.read!("test/data/day_13_removing_crashes_overlapping") |> Day13.parse_input()
+      {coord, {_track, carts}} = Day13.run_removing_crashes(input, 0)
+
+      assert coord == {2, 4}
+      assert carts == {:left, :straight}
+    end
   end
 end
