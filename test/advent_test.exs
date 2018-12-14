@@ -13,6 +13,7 @@ defmodule AdventTest do
   doctest Day10
   doctest Day11
   doctest Day12
+  doctest Day14
 
   describe "day 7, #tick" do
     test "it performs the first tick with sample input" do
