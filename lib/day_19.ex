@@ -76,4 +76,15 @@ defmodule Day19 do
     cmd = {String.to_atom(a), String.to_integer(b), String.to_integer(c), String.to_integer(d)}
     {Map.put(map, count, cmd), count + 1}
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 19, part 1" => fn -> Advent.data(19) |> Day19.part1() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end
