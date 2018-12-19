@@ -17,6 +17,20 @@ defmodule Day17 do
     Ground.count_wet_squares()
   end
 
+  @doc """
+  iex> File.read!("test/data/day_17/sample") |> Day17.parse_input |> Day17.part2()
+  29
+  """
+  def part2(state, {from_x, from_y} \\ {500, 0}) do
+    {_max_x, max_y} = state |> Map.get(:clay) |> Enum.max_by(fn {_, y} -> y end)
+    Ground.init(state)
+
+    run_water([from_x], {from_y, max_y + 1})
+
+    # This is the only line different from part 1.
+    Ground.count_water_squares()
+  end
+
   defp run_water(x, {max_y, max_y}), do: x
 
   defp run_water(streams, {y, max_y}) do
@@ -185,6 +199,18 @@ defmodule Day17 do
     |> MapSet.new()
     |> MapSet.union(field)
   end
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 17, part 1" => fn -> Advent.data(17) |> Day17.parse_input() |> Day17.part1() end,
+        "day 17, part 2" => fn -> Advent.data(17) |> Day17.parse_input() |> Day17.part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end
 
 defmodule Day17.Ground do
@@ -235,6 +261,12 @@ defmodule Day17.Ground do
   def count_wet_squares() do
     Agent.get(__MODULE__, fn {_, field} ->
       MapSet.size(Map.get(field, :wet)) + MapSet.size(Map.get(field, :water))
+    end)
+  end
+
+  def count_water_squares() do
+    Agent.get(__MODULE__, fn {_, field} ->
+      MapSet.size(Map.get(field, :water))
     end)
   end
 
