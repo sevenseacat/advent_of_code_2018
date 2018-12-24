@@ -58,4 +58,16 @@ defmodule Day20 do
   defp make_move("E", {x, y}), do: {x + 1, y}
   defp make_move("S", {x, y}), do: {x, y - 1}
   defp make_move("N", {x, y}), do: {x, y + 1}
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 20, part 1" => fn -> Advent.data(20) |> Day20.part1() end,
+        "day 20, part 2" => fn -> Advent.data(20) |> Day20.part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end
