@@ -1,7 +1,7 @@
 defmodule Day19 do
   def part1(input) do
     %{ip: ip, commands: commands} = parse_input(input)
-    run_commands([0, 0, 0, 0, 0, 0], ip, commands)
+    run_commands([0, 0, 0, 0, 0, 0], ip, commands, 0)
   end
 
   def part2(_input) do
@@ -42,7 +42,7 @@ defmodule Day19 do
     # this function deliberately left blank
   end
 
-  defp run_commands(rs, ip, commands) do
+  def run_commands(rs, ip, commands, counter) do
     command = Map.get(commands, Enum.at(rs, ip))
 
     case command do
@@ -56,7 +56,7 @@ defmodule Day19 do
 
         # Increment the IP register and continue
         rs = List.replace_at(rs, ip, Enum.at(rs, ip) + 1)
-        run_commands(rs, ip, commands)
+        run_commands(rs, ip, commands, counter + 1)
     end
   end
 
