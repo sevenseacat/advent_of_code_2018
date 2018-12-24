@@ -36,6 +36,56 @@ defmodule Day21 do
     # > That's the right answer! You are one gold star closer to fixing the time stream.
     # Oh dammit.
     %{ip: ip, commands: commands} = Day19.parse_input(input)
-    Day19.run_commands([986_758, 0, 0, 0, 0, 0], ip, commands, 0)
+    Day19.run_commands([986_758, 0, 0, 0, 0, 0], ip, commands)
+  end
+
+  def part2(input) do
+    # So there's going to be a loop in the R3 value over time, and we want the value of
+    # the very last one before the loop starts again. That will execute the most
+    # instructions.
+    %{ip: ip, commands: commands} = Day19.parse_input(input)
+    run_commands([0, 0, 0, 0, 0, 0], ip, commands, [], 0)
+  end
+
+  def run_commands(rs, ip, commands, seen, count) do
+    {cmd, in1, in2, out} = command = Map.get(commands, Enum.at(rs, ip))
+
+    case check_r3_val(command, seen, rs) do
+      {:halt, val} ->
+        val
+
+      {:cont, vals} ->
+        new_val = apply(Day16, cmd, [rs, [in1, in2]])
+        rs = List.replace_at(rs, out, new_val)
+
+        # Increment the IP register and continue
+        rs = List.replace_at(rs, ip, Enum.at(rs, ip) + 1)
+        run_commands(rs, ip, commands, vals, count + 1)
+    end
+  end
+
+  defp check_r3_val({:eqrr, 3, 0, 4}, seen, registers) do
+    r3_val = Enum.at(registers, 3)
+
+    if r3_val in seen do
+      {:halt, hd(seen)}
+    else
+      IO.inspect(length(seen))
+      {:cont, [r3_val | seen]}
+    end
+  end
+
+  defp check_r3_val(_, seen, _), do: {:cont, seen}
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 21, part 1" => fn -> Advent.data(21) |> Day21.part1() end,
+        "day 21, part 2" => fn -> Advent.data(21) |> Day21.part2() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
   end
 end
