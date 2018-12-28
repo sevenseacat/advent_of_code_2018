@@ -62,4 +62,15 @@ defmodule Day22 do
   defp get_symbol(0), do: "."
   defp get_symbol(1), do: "="
   defp get_symbol(2), do: "|"
+
+  def bench do
+    Benchee.run(
+      %{
+        "day 22, part 1" => fn -> Day22.part1() end
+      },
+      Application.get_env(:advent, :benchee)
+    )
+
+    :ok
+  end
 end
