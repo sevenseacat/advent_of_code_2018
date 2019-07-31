@@ -19,7 +19,7 @@ defmodule Day23 do
   iex> Day23.part2([%{x: 10, y: 12, z: 12, r: 2}, %{x: 12, y: 14, z: 12, r: 2},
   ...>   %{x: 16, y: 12, z: 12, r: 4}, %{x: 14, y: 14, z: 14, r: 6},
   ...>   %{x: 50, y: 50, z: 50, r: 200}, %{x: 10, y: 10, z: 10, r: 5}])
-  {{12, 12, 12}, 36, 5}
+  36
   """
   def part2(bots) do
     {%{x: min_x}, %{x: max_x}} = Enum.min_max_by(bots, fn %{x: x} -> x end)
