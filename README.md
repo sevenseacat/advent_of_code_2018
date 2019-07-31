@@ -94,5 +94,6 @@ day 21, part 1        820.53    0.00002 min    ±11.50%    0.00002 min    0.0000
 day 21, part 2       0.00056      29.94 min     ±0.00%      29.94 min      29.94 min
 
 Name                     ips        average  deviation         median         99th %
-day 22, part 1        103.97        9.62 ms    ±32.52%        8.73 ms       27.03 ms
+day 22, part 1         86.69       0.0115 s    ±16.70%       0.0113 s       0.0189 s
+day 22, part 2          0.35         2.87 s     ±8.59%         2.87 s         3.05 s
 ```
