@@ -30,20 +30,20 @@ defmodule Day22 do
     # and build an erosion table/graph thats twice as deep and twice as wide as
     # the target coordinate. If this doesn't find the shortest path, I'll expand
     # it.
-    max_x = x*2
-    max_y = y*2
+    max_x = x * 2
+    max_y = y * 2
 
     table = build_erosion_level_table({x, y}, {max_x, max_y}, depth)
 
     # Build a graph of all the possible moves from (0, 0) to (depth, depth) to
     # run a BFS search on it. This includes tool changes.
-    graph = Graph.new |> Graph.add_vertex({0, 0, :torch})
+    graph = Graph.new() |> Graph.add_vertex({0, 0, :torch})
 
     Enum.reduce(0..max_x, graph, fn x, x_acc ->
       Enum.reduce(0..max_y, x_acc, fn y, acc ->
         current = {x, y, Map.get(table, {x, y})}
 
-        [{x+1, y, Map.get(table, {x+1, y})}, {x, y+1, Map.get(table, {x, y+1})}]
+        [{x + 1, y, Map.get(table, {x + 1, y})}, {x, y + 1, Map.get(table, {x, y + 1})}]
         |> Enum.filter(fn {_, _, soil} -> soil != nil end)
         |> Enum.reduce(acc, fn move, graph -> add_move(graph, current, move) end)
         |> add_tool_changes(current)
@@ -52,12 +52,14 @@ defmodule Day22 do
   end
 
   def calculate_time(nil, 0), do: 0
-  def calculate_time([{_, _, a}, {_, _, b}=second | rest], time) do
+
+  def calculate_time([{_, _, a}, {_, _, b} = second | rest], time) do
     case a == b do
-      true -> calculate_time([second | rest], time+1)
-      false -> calculate_time([second | rest], time+7)
+      true -> calculate_time([second | rest], time + 1)
+      false -> calculate_time([second | rest], time + 7)
     end
   end
+
   def calculate_time([_], time), do: time
 
   # Same soil type
@@ -75,9 +77,12 @@ defmodule Day22 do
     to_tools = valid_tools(to_soil)
 
     # https://kmrakibulislam.wordpress.com/2015/10/25/find-common-items-in-two-lists-in-elixir/
-    case from_tools -- (from_tools -- to_tools) do
-      nil -> graph
-      [tool] -> graph
+    case from_tools -- from_tools -- to_tools do
+      nil ->
+        graph
+
+      [tool] ->
+        graph
         |> Graph.add_edge({from_x, from_y, tool}, {to_x, to_y, tool}, weight: 1)
         |> Graph.add_edge({to_x, to_y, tool}, {from_x, from_y, tool}, weight: 1)
     end
@@ -85,6 +90,7 @@ defmodule Day22 do
 
   defp add_tool_changes(graph, {x, y, soil}) do
     [t1, t2] = valid_tools(soil)
+
     graph
     |> Graph.add_edge({x, y, t1}, {x, y, t2}, weight: 7)
     |> Graph.add_edge({x, y, t2}, {x, y, t1}, weight: 7)
