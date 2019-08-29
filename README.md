@@ -1,5 +1,7 @@
 # Advent of Code 2018
 
+![Build Status](https://github.com/sevenseacat/advent_of_code_2018/workflows/Elixir%20CI/badge.svg)
+
 My Elixir solutions for the [Advent of Code 2018](http://adventofcode.com/2018).
 
 ## Benchmarks
