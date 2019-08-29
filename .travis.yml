@@ -1,4 +1,0 @@
-dist: xenial
-sudo: false
-language: elixir
-elixir: '1.7.4'
